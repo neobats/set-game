@@ -1,25 +1,25 @@
 @react.component
 let make = (~text: string, ~onClick: (JsxEvent.Mouse.t) => unit) => {
-  let (countdown, setCountdown) = React.useState(() => None)
+  let (countdown, setCountdown) = React.useState(() => Time.Stopped)
   let (buttonText, setButtonText) = React.useState(() => text)
 
   let handleClick = event => {
     onClick(event)
-    setCountdown(_ => Some(10))
+    setCountdown(_ => Time.Count(10))
   }
   
   let onCountdownEnd = () => {
-    setCountdown(_ => None)
+    setCountdown(_ => Time.Stopped)
     setButtonText(_ => "SET!")
   }
 
-  let onCountdownDecrement = (timeRemaining: option<int>) => {
+  let onCountdownDecrement = (timeRemaining: Time.t) => {
     setButtonText(_ => switch timeRemaining {
-      | Some(time) => time -> Int.toString
-      | None => text
+      | Time.Count(time) => time -> Int.toString
+      | _ => text
     })
 
-    if (timeRemaining == Some(0)) {
+    if (timeRemaining == Time.Ending) {
       onCountdownEnd()
     }
   }

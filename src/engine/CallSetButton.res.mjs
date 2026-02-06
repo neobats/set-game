@@ -3,30 +3,32 @@
 import * as Time from "./Time.res.mjs";
 import * as React from "react";
 import * as Button from "../Button.res.mjs";
-import * as Primitive_object from "@rescript/runtime/lib/es6/Primitive_object.js";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function CallSetButton(props) {
   let onClick = props.onClick;
   let text = props.text;
-  let match = React.useState(() => {});
+  let match = React.useState(() => "Stopped");
   let setCountdown = match[1];
   let match$1 = React.useState(() => text);
   let setButtonText = match$1[1];
   let handleClick = event => {
     onClick(event);
-    setCountdown(param => 10);
+    setCountdown(param => ({
+      TAG: "Count",
+      _0: 10
+    }));
   };
   let onCountdownDecrement = timeRemaining => {
     setButtonText(param => {
-      if (timeRemaining !== undefined) {
-        return timeRemaining.toString();
-      } else {
+      if (typeof timeRemaining !== "object") {
         return text;
+      } else {
+        return timeRemaining._0.toString();
       }
     });
-    if (Primitive_object.equal(timeRemaining, 0)) {
-      setCountdown(param => {});
+    if (timeRemaining === "Ending") {
+      setCountdown(param => "Stopped");
       return setButtonText(param => "SET!");
     }
   };

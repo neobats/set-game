@@ -1,12 +1,18 @@
+type t = 
+  | Count(int)
+  | Ending
+  | Stopped
+
 let initiateTimeout = (
-  setter: (option<int> => option<int>) => unit,
-  onDecrement: option<int> => unit,
+  setter: (t => t) => unit,
+  onDecrement: t => unit,
   ) => {
   let timeout = setTimeout(() => setter(prev => {
     let newValue = switch prev {
-      | None => None
-      | Some(0) => None
-      | x => Option.map(x, a => a - 1)
+      | Stopped => Stopped
+      | Ending => Stopped
+      | Count(0) => Ending
+      | Count(x) => Count(x - 1)
     }
     onDecrement(newValue)
     newValue
@@ -16,19 +22,18 @@ let initiateTimeout = (
 }
 
 let useCountdown = (
-  ~totalTime: option<int>,
-  ~setter: (option<int> => option<int>) => unit,
-  ~onDecrement: option<int> => unit,
+  ~totalTime: t,
+  ~setter: (t => t) => unit,
+  ~onDecrement: t => unit,
 ) => {
 
   React.useEffect(() => {
-    let _ = switch totalTime {
-      | Some(0) => None
-      | Some(_) => initiateTimeout(setter, onDecrement)
-      | None => None
+    switch totalTime {
+      | Ending => None
+      | Count(_) => initiateTimeout(setter, onDecrement)
+      | Stopped => None
     }
-    Some(() => setter(_ => None))
-  }, (totalTime, setter))
+  }, (totalTime, setter, onDecrement))
 
   totalTime
 }
