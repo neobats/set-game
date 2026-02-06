@@ -22,11 +22,12 @@ let useCountdown = (
 ) => {
 
   React.useEffect(() => {
-    switch totalTime {
+    let _ = switch totalTime {
       | Some(0) => None
       | Some(_) => initiateTimeout(setter, onDecrement)
       | None => None
     }
+    Some(() => setter(_ => None))
   }, (totalTime, setter))
 
   totalTime

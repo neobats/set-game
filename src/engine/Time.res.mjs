@@ -17,8 +17,9 @@ function initiateTimeout(setter, onDecrement) {
 function useCountdown(totalTime, setter, onDecrement) {
   React.useEffect(() => {
     if (totalTime !== undefined && totalTime !== 0) {
-      return initiateTimeout(setter, onDecrement);
+      initiateTimeout(setter, onDecrement);
     }
+    return () => setter(param => {});
   }, [
     totalTime,
     setter
