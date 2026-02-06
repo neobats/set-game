@@ -1,3 +1,17 @@
+let areSame = (property: Card.property) => {
+  switch property {
+  | Card.Shape => (a: Card.t, b: Card.t) => a.shape == b.shape
+  | Card.Color => (a, b) => a.color == b.color
+  | Card.Fill => (a, b) => a.fill == b.fill
+  | Card.Number => (a, b) => a.number == b.number
+  }
+}
+
+let areShapesSame = areSame(Card.Shape)
+let areColorsSame = areSame(Card.Color)
+let areFillsSame = areSame(Card.Fill)
+let areNumbersSame = areSame(Card.Number)
+
 module type Collection = {
   type t<'a>
   let length: t<'a> => int
@@ -37,10 +51,11 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
   /**
     Check if a collection has exactly 3 cards (required for a Set)
    */
-  let maybeSet = (cards: t): bool => {
+  let maybeSet = (cards: t): status => {
     switch Collection.length(cards) {
-    | 3 => true
-    | _ => false
+    | 3 => Filled(cards)
+    | 0 => Empty
+    | _ => Filling(cards)
     }
   }
 

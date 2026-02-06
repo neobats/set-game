@@ -2,6 +2,27 @@
 
 import * as Stdlib_List from "@rescript/runtime/lib/es6/Stdlib_List.js";
 
+function areSame(property) {
+  switch (property) {
+    case "Shape" :
+      return (a, b) => a.shape === b.shape;
+    case "Color" :
+      return (a, b) => a.color === b.color;
+    case "Fill" :
+      return (a, b) => a.fill === b.fill;
+    case "Number" :
+      return (a, b) => a.number === b.number;
+  }
+}
+
+let areShapesSame = areSame("Shape");
+
+let areColorsSame = areSame("Color");
+
+let areFillsSame = areSame("Fill");
+
+let areNumbersSame = areSame("Number");
+
 function init() {
   return /* [] */0;
 }
@@ -18,7 +39,21 @@ function MakeGameSet(C) {
   return Collection => {
     let maybeSet = cards => {
       let match = Collection.length(cards);
-      return match === 3;
+      if (match !== 0) {
+        if (match !== 3) {
+          return {
+            TAG: "Filling",
+            _0: cards
+          };
+        } else {
+          return {
+            TAG: "Filled",
+            _0: cards
+          };
+        }
+      } else {
+        return "Empty";
+      }
     };
     let add = (cards, card) => {
       let match = Collection.length(cards);
@@ -41,7 +76,21 @@ function MakeGameSet(C) {
 
 function maybeSet(cards) {
   let match = Stdlib_List.length(cards);
-  return match === 3;
+  if (match !== 0) {
+    if (match !== 3) {
+      return {
+        TAG: "Filling",
+        _0: cards
+      };
+    } else {
+      return {
+        TAG: "Filled",
+        _0: cards
+      };
+    }
+  } else {
+    return "Empty";
+  }
 }
 
 function add(cards, card) {
@@ -63,8 +112,13 @@ let GameSet = {
 };
 
 export {
+  areSame,
+  areShapesSame,
+  areColorsSame,
+  areFillsSame,
+  areNumbersSame,
   ListCollection,
   MakeGameSet,
   GameSet,
 }
-/* No side effect */
+/* areShapesSame Not a pure module */
