@@ -4,6 +4,7 @@ module type Collection = {
   let add: (t<'a>, 'a) => t<'a>
   let map: (t<'a>, 'a => 'b) => t<'b>
   let toArray: t<'a> => array<'a>
+  let init: unit => t<'a>
 }
 
 module ListCollection = {
@@ -12,6 +13,7 @@ module ListCollection = {
   let add = List.add
   let map = List.map
   let toArray = List.toArray
+  let init = () => list{}
 }
 
 /**
@@ -19,12 +21,18 @@ module ListCollection = {
   - Card: the card module type
   - Collection: the collection module (like ListCollection)
  */
-module MakeGameSet = (Card: Card.t, Collection: Collection) => {
-  type t = Collection.t<Card.t>
+module MakeGameSet = (C: Card.t, Collection: Collection) => {
+  type t = Collection.t<C.t>
+
+  type status = 
+    | Filling(t)
+    | Filled(t)
+    | Empty
 
   let length = Collection.length
   let map = Collection.map
   let toArray = Collection.toArray
+  let make = Collection.init
 
   /**
     Check if a collection has exactly 3 cards (required for a Set)
@@ -36,7 +44,7 @@ module MakeGameSet = (Card: Card.t, Collection: Collection) => {
     }
   }
 
-  let add = (cards: t, card: Card.t) => {
+  let add = (cards: t, card: C.t) => {
     switch Collection.length(cards) {
     | 3 => cards
     | _ => Collection.add(cards, card)

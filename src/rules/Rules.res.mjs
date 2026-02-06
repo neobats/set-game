@@ -2,14 +2,19 @@
 
 import * as Stdlib_List from "@rescript/runtime/lib/es6/Stdlib_List.js";
 
+function init() {
+  return /* [] */0;
+}
+
 let ListCollection = {
   length: Stdlib_List.length,
   add: Stdlib_List.add,
   map: Stdlib_List.map,
-  toArray: Stdlib_List.toArray
+  toArray: Stdlib_List.toArray,
+  init: init
 };
 
-function MakeGameSet(Card) {
+function MakeGameSet(C) {
   return Collection => {
     let maybeSet = cards => {
       let match = Collection.length(cards);
@@ -27,6 +32,7 @@ function MakeGameSet(Card) {
       length: Collection.length,
       map: Collection.map,
       toArray: Collection.toArray,
+      make: Collection.init,
       maybeSet: maybeSet,
       add: add
     };
@@ -51,6 +57,7 @@ let GameSet = {
   length: Stdlib_List.length,
   map: Stdlib_List.map,
   toArray: Stdlib_List.toArray,
+  make: init,
   maybeSet: maybeSet,
   add: add
 };
