@@ -1,3 +1,4 @@
+// TODO: add a cancel
 type t = 
   | Count(int)
   | Ending
