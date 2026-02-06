@@ -37,9 +37,22 @@ function toFill(n) {
   }
 }
 
+function toNumber(n) {
+  if (n !== 1) {
+    if (n !== 2) {
+      return "Three";
+    } else {
+      return "Two";
+    }
+  } else {
+    return "One";
+  }
+}
+
 export {
   toShape,
   toColor,
   toFill,
+  toNumber,
 }
 /* No side effect */

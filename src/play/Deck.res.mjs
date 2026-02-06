@@ -9,19 +9,19 @@ function init() {
     shape: "Tilde",
     color: "Red",
     fill: "Solid",
-    qty: 1
+    number: "One"
   }));
   let cardId = 0;
   for (let shape = 1; shape <= 3; ++shape) {
     for (let color = 1; color <= 3; ++color) {
-      for (let qty = 1; qty <= 3; ++qty) {
+      for (let number = 1; number <= 3; ++number) {
         for (let fill = 1; fill <= 3; ++fill) {
           cards[cardId] = {
             id: cardId,
             shape: Card.toShape(shape),
             color: Card.toColor(color),
             fill: Card.toFill(fill),
-            qty: qty
+            number: Card.toNumber(number)
           };
           cardId = cardId + 1 | 0;
         }

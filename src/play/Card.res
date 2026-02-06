@@ -14,13 +14,24 @@ type fill =
 | Stripped
 | Outlined
 
+type number = 
+| One
+| Two
+| Three
+
 type t = {
   id: int,
   shape: shape,
   color: color,
   fill: fill,
-  qty: int,
+  number: number,
 }
+
+type property = 
+| Shape
+| Color
+| Fill
+| Number
 
 /**
   Convert integer (1-3) to shape variant
@@ -55,6 +66,14 @@ let toFill = (n: int): fill => {
   }
 }
 
+let toNumber = (n: int): number => {
+  switch n {
+  | 1 => One
+  | 2 => Two
+  | _ => Three
+  }
+}
+
 module type t = {
   type shape
   type color
@@ -63,4 +82,5 @@ module type t = {
   let toShape: int => shape
   let toColor: int => color
   let toFill: int => fill
+  let toNumber: int => number
 }
