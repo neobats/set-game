@@ -2,7 +2,6 @@ type check =
 | Valid
 | Invalid
 
-
 module type Collection = {
   type t<'a>
   let length: t<'a> => int
@@ -20,7 +19,6 @@ module ListCollection = {
   let toArray = List.toArray
   let init = () => list{}
 }
-
 
 /**
   Functor that creates a GameSet module parameterized by:
