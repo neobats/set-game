@@ -14,7 +14,7 @@ function showBoardState(state) {
   }
 }
 
-function Board$Component(props) {
+function Board$Render(props) {
   let match = React.useState(() => "Active");
   return JsxRuntime.jsx("article", {
     children: JsxRuntime.jsx("p", {
@@ -24,12 +24,12 @@ function Board$Component(props) {
   });
 }
 
-let Component = {
-  make: Board$Component
+let Render = {
+  make: Board$Render
 };
 
 export {
   showBoardState,
-  Component,
+  Render,
 }
 /* react Not a pure module */

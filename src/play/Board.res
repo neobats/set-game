@@ -11,7 +11,7 @@ let showBoardState = (state: state) => {
   } -> React.string
 }
 
-module Component = {
+module Render = {
   @react.component
   let make = () => {
   let (boardState, setBoardState) = React.useState(() => Active)

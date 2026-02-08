@@ -34,4 +34,4 @@ function init() {
 export {
   init,
 }
-/* No side effect */
+/* Card Not a pure module */
