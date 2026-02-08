@@ -1,16 +1,7 @@
-let areSame = (property: Card.property) => {
-  switch property {
-  | Card.Shape => (a: Card.t, b: Card.t) => a.shape == b.shape
-  | Card.Color => (a, b) => a.color == b.color
-  | Card.Fill => (a, b) => a.fill == b.fill
-  | Card.Number => (a, b) => a.number == b.number
-  }
-}
+type check =
+| Valid
+| Invalid
 
-let areShapesSame = areSame(Card.Shape)
-let areColorsSame = areSame(Card.Color)
-let areFillsSame = areSame(Card.Fill)
-let areNumbersSame = areSame(Card.Number)
 
 module type Collection = {
   type t<'a>
@@ -30,6 +21,7 @@ module ListCollection = {
   let init = () => list{}
 }
 
+
 /**
   Functor that creates a GameSet module parameterized by:
   - Card: the card module type
@@ -48,6 +40,10 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
   let toArray = Collection.toArray
   let make = Collection.init
 
+  let inspect = (cards: t) => {
+    Console.log2("Cards", cards)
+    cards
+  }
   /**
     Check if a collection has exactly 3 cards (required for a Set)
    */
@@ -60,11 +56,66 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
   }
 
   let add = (cards: t, card: C.t) => {
-    switch Collection.length(cards) {
+    Console.log2("Adding card", card)
+    let length
+    = Collection.length(cards)
+    Console.log2("Length", length)
+    switch length {
     | 3 => cards
     | _ => Collection.add(cards, card)
+    }
+  }
+
+  let rec toSet = (s: Set.t<'a>,l: list<'a>): Set.t<'a> => {
+    switch l {
+    | list{head, ...tail} => {
+      Set.add(s, head)
+      toSet(s, tail)
+    }
+    | list{} => s
+    }
+  }
+
+  let checkShapes = (cards: list<Card.t>): check => {
+    let shapes = toSet(Set.make(), List.map(cards, (card) => card.shape))
+    switch Set.size(shapes) {
+    | 1 => Valid
+    | 3 => Valid
+    | _ => Invalid
     }
   }
 }
 
 module GameSet = MakeGameSet(Card, ListCollection)
+
+let test = () => {
+  let deck = Deck.init() -> Belt.Array.shuffle
+  Console.log2("Deck", deck)
+  let cards = Array.slice(deck, ~start=0, ~end=3)
+  let set = [0, 1, 2] -> Array.reduce(GameSet.make(), (set, i) => {
+    let card = Array.get(cards, i)->Option.getOrThrow
+    Console.log2("From array: Card", card)
+    set
+    -> GameSet.inspect 
+    -> GameSet.add(card)
+  })
+  let status = GameSet.maybeSet(set)
+  Console.log2("Status", status)
+  switch status {
+  | GameSet.Filled(set) => Console.log2("Set filled", set)
+  | GameSet.Filling(set) => Console.log2("Set filling", set)
+  | GameSet.Empty => Console.log("Set empty")
+  }
+
+  let check = cards
+    -> List.fromArray
+    -> GameSet.checkShapes
+    -> (c) => {
+      switch c {
+      | Valid => Console.log("Valid")
+      | Invalid => Console.log("Invalid")
+      }
+      c
+    }
+  Console.log2("Check", check)
+}

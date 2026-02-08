@@ -17,6 +17,7 @@ let make = () => {
   let handleClick = _ => {
     setYeet(_ => Some(Yeet.make()))
   }
+  // Rules.test()
   <div className="max-w-200">
     <h1 className="text-6xl m-16 font-semibold text-center"> {"Set game"->React.string} </h1>
     <h2 className="text-2xl m-16 font-semibold text-center"> {yeet->Option.getOr(React.null)} </h2>
