@@ -20,8 +20,9 @@ let ListCollection = {
 
 function MakeGameSet(C) {
   return Collection => {
-    let inspect = cards => {
-      console.log("Cards", cards);
+    let inspect = (cards, messageOpt) => {
+      let message = messageOpt !== undefined ? messageOpt : "Cards";
+      console.log(message, cards);
       return cards;
     };
     let maybeSet = cards => {
@@ -43,10 +44,8 @@ function MakeGameSet(C) {
       }
     };
     let add = (cards, card) => {
-      console.log("Adding card", card);
-      let length = Collection.length(cards);
-      console.log("Length", length);
-      if (length !== 3) {
+      let match = Collection.length(cards);
+      if (match !== 3) {
         return Collection.add(cards, card);
       } else {
         return cards;
@@ -63,15 +62,19 @@ function MakeGameSet(C) {
         continue;
       };
     };
-    let checkShapes = cards => {
-      let shapes = toSet(new Set(), Stdlib_List.map(cards, card => card.shape));
-      let match = shapes.size;
+    let checkProperty = (getProperty, cards) => {
+      let values = toSet(new Set(), Stdlib_List.map(cards, getProperty));
+      let match = values.size;
       if (match !== 1 && match !== 3) {
         return "Invalid";
       } else {
         return "Valid";
       }
     };
+    let checkShapes = extra => checkProperty(card => card.shape, extra);
+    let checkColors = extra => checkProperty(card => card.color, extra);
+    let checkFills = extra => checkProperty(card => card.fill, extra);
+    let checkNumbers = extra => checkProperty(card => card.number, extra);
     return {
       length: Collection.length,
       map: Collection.map,
@@ -81,13 +84,18 @@ function MakeGameSet(C) {
       maybeSet: maybeSet,
       add: add,
       toSet: toSet,
-      checkShapes: checkShapes
+      checkProperty: checkProperty,
+      checkShapes: checkShapes,
+      checkColors: checkColors,
+      checkFills: checkFills,
+      checkNumbers: checkNumbers
     };
   };
 }
 
-function inspect(cards) {
-  console.log("Cards", cards);
+function inspect(cards, messageOpt) {
+  let message = messageOpt !== undefined ? messageOpt : "Cards";
+  console.log(message, cards);
   return cards;
 }
 
@@ -111,10 +119,8 @@ function maybeSet(cards) {
 }
 
 function add(cards, card) {
-  console.log("Adding card", card);
-  let length = Stdlib_List.length(cards);
-  console.log("Length", length);
-  if (length !== 3) {
+  let match = Stdlib_List.length(cards);
+  if (match !== 3) {
     return Stdlib_List.add(cards, card);
   } else {
     return cards;
@@ -133,14 +139,30 @@ function toSet(s, _l) {
   };
 }
 
-function checkShapes(cards) {
-  let shapes = toSet(new Set(), Stdlib_List.map(cards, card => card.shape));
-  let match = shapes.size;
+function checkProperty(getProperty, cards) {
+  let values = toSet(new Set(), Stdlib_List.map(cards, getProperty));
+  let match = values.size;
   if (match !== 1 && match !== 3) {
     return "Invalid";
   } else {
     return "Valid";
   }
+}
+
+function checkShapes(extra) {
+  return checkProperty(card => card.shape, extra);
+}
+
+function checkColors(extra) {
+  return checkProperty(card => card.color, extra);
+}
+
+function checkFills(extra) {
+  return checkProperty(card => card.fill, extra);
+}
+
+function checkNumbers(extra) {
+  return checkProperty(card => card.number, extra);
 }
 
 let GameSet = {
@@ -152,39 +174,60 @@ let GameSet = {
   maybeSet: maybeSet,
   add: add,
   toSet: toSet,
-  checkShapes: checkShapes
+  checkProperty: checkProperty,
+  checkShapes: checkShapes,
+  checkColors: checkColors,
+  checkFills: checkFills,
+  checkNumbers: checkNumbers
 };
 
 function test() {
   let deck = Belt_Array.shuffle(Deck.init());
   console.log("Deck", deck);
   let cards = deck.slice(0, 3);
-  let set = Stdlib_Array.reduce([
+  Stdlib_Array.reduce([
     0,
     1,
     2
   ], init(), (set, i) => {
-    let card = Stdlib_Option.getOrThrow(cards[i], undefined);
-    console.log("From array: Card", card);
-    return add(inspect(set), card);
+    let __x = maybeSet(set);
+    console.log("Status", __x);
+    let s = add(set, Stdlib_Option.getOrThrow(cards[i], undefined));
+    let status = maybeSet(s);
+    if (typeof status !== "object") {
+      console.log("Set empty");
+    } else if (status.TAG === "Filling") {
+      console.log("Set filling", status._0);
+    } else {
+      console.log("Set filled", status._0);
+    }
+    return s;
   });
-  let status = maybeSet(set);
-  console.log("Status", status);
-  if (typeof status !== "object") {
-    console.log("Set empty");
-  } else if (status.TAG === "Filling") {
-    console.log("Set filling", status._0);
-  } else {
-    console.log("Set filled", status._0);
-  }
-  let c = checkShapes(Stdlib_List.fromArray(cards));
-  if (c === "Valid") {
-    console.log("Valid");
-  } else {
-    console.log("Invalid");
-  }
-  let check = c;
-  console.log("Check", check);
+  let listCards = Stdlib_List.fromArray(cards);
+  let checkFns = [
+    [
+      "Shapes",
+      checkShapes
+    ],
+    [
+      "Colors",
+      checkColors
+    ],
+    [
+      "Fills",
+      checkFills
+    ],
+    [
+      "Numbers",
+      checkNumbers
+    ]
+  ];
+  checkFns.map(param => [
+    param[0],
+    param[1](listCards)
+  ]).forEach(param => {
+    console.log("Check", param[0], param[1]);
+  });
 }
 
 export {

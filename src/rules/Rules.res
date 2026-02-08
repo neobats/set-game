@@ -40,10 +40,14 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
   let toArray = Collection.toArray
   let make = Collection.init
 
-  let inspect = (cards: t) => {
-    Console.log2("Cards", cards)
+  /*
+   Debugging function to print cards
+   */
+  let inspect = (cards: t, ~message: string = "Cards") => {
+    Console.log2(message, cards)
     cards
   }
+
   /**
     Check if a collection has exactly 3 cards (required for a Set)
    */
@@ -55,17 +59,19 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
     }
   }
 
+  /**
+   Add a card to the collection if the collection; no op if full
+   */
   let add = (cards: t, card: C.t) => {
-    Console.log2("Adding card", card)
-    let length
-    = Collection.length(cards)
-    Console.log2("Length", length)
-    switch length {
+    switch Collection.length(cards) {
     | 3 => cards
     | _ => Collection.add(cards, card)
     }
   }
 
+  /**
+   Convert a list to a set
+   */
   let rec toSet = (s: Set.t<'a>,l: list<'a>): Set.t<'a> => {
     switch l {
     | list{head, ...tail} => {
@@ -76,14 +82,39 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
     }
   }
 
-  let checkShapes = (cards: list<Card.t>): check => {
-    let shapes = toSet(Set.make(), List.map(cards, (card) => card.shape))
-    switch Set.size(shapes) {
+  /**
+   Generic property checker: verifies that a property across cards forms a valid set
+   (all same or all different - i.e., set size is 1 or 3)
+   Takes the property getter first to enable partial application
+   */
+  let checkProperty = (getProperty: Card.t => 'a, cards: list<Card.t>): check => {
+    let values = toSet(Set.make(), List.map(cards, getProperty))
+    switch Set.size(values) {
     | 1 => Valid
     | 3 => Valid
     | _ => Invalid
     }
   }
+
+  /**
+   Verifies the shapes constitute part of a valid set
+   */
+  let checkShapes = checkProperty((card) => card.shape, ...)
+
+  /**
+   Verifies the colors constitute part of a valid set
+   */
+  let checkColors = checkProperty((card) => card.color, ...)
+
+  /**
+   Verifies the fills constitute part of a valid set
+   */
+  let checkFills = checkProperty((card) => card.fill, ...)
+
+  /**
+   Verifies the numbers constitute part of a valid set
+   */
+  let checkNumbers = checkProperty((card) => card.number, ...)
 }
 
 module GameSet = MakeGameSet(Card, ListCollection)
@@ -91,31 +122,39 @@ module GameSet = MakeGameSet(Card, ListCollection)
 let test = () => {
   let deck = Deck.init() -> Belt.Array.shuffle
   Console.log2("Deck", deck)
-  let cards = Array.slice(deck, ~start=0, ~end=3)
-  let set = [0, 1, 2] -> Array.reduce(GameSet.make(), (set, i) => {
-    let card = Array.get(cards, i)->Option.getOrThrow
-    Console.log2("From array: Card", card)
-    set
-    -> GameSet.inspect 
-    -> GameSet.add(card)
-  })
-  let status = GameSet.maybeSet(set)
-  Console.log2("Status", status)
-  switch status {
-  | GameSet.Filled(set) => Console.log2("Set filled", set)
-  | GameSet.Filling(set) => Console.log2("Set filling", set)
-  | GameSet.Empty => Console.log("Set empty")
-  }
 
-  let check = cards
-    -> List.fromArray
-    -> GameSet.checkShapes
-    -> (c) => {
-      switch c {
-      | Valid => Console.log("Valid")
-      | Invalid => Console.log("Invalid")
+  let cards = Array.slice(deck, ~start=0, ~end=3)
+  [0, 1, 2] -> Array.reduce(
+    GameSet.make(),
+    (set, i) => {
+      GameSet.maybeSet(set) -> Console.log2("Status", _)
+      let s = GameSet.add(
+        set, 
+        Array.get(cards, i)->Option.getOrThrow,
+      )
+
+      let status = GameSet.maybeSet(s)
+
+      switch status {
+      | GameSet.Filled(set') => Console.log2("Set filled", set')
+      | GameSet.Filling(set') => Console.log2("Set filling", set')
+      | GameSet.Empty => Console.log("Set empty")
       }
-      c
+
+      s
     }
-  Console.log2("Check", check)
+  ) -> ignore
+
+
+  let listCards = List.fromArray(cards)
+  let checkFns = [
+    ("Shapes", GameSet.checkShapes),
+    ("Colors", GameSet.checkColors),
+    ("Fills", GameSet.checkFills),
+    ("Numbers", GameSet.checkNumbers)
+  ]
+
+  let _ = checkFns 
+    -> Array.map(((name, checkFn)) => (name, checkFn(listCards)))
+    -> Array.forEach(((name, check)) => Console.log3("Check", name, check))
 }
