@@ -11,7 +11,7 @@ type color =
 
 type fill =
 | Solid
-| Stripped
+| Striped
 | Outlined
 
 type number = 
@@ -61,7 +61,7 @@ let toColor = (n: int): color => {
 let toFill = (n: int): fill => {
   switch n {
   | 1 => Solid
-  | 2 => Stripped
+  | 2 => Striped
   | _ => Outlined
   }
 }

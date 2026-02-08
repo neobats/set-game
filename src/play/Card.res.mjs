@@ -30,7 +30,7 @@ function toFill(n) {
     if (n !== 2) {
       return "Outlined";
     } else {
-      return "Stripped";
+      return "Striped";
     }
   } else {
     return "Solid";
