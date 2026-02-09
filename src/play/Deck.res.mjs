@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as CardDef from "../rules/CardDef.res.mjs";
 import * as Belt_Array from "@rescript/runtime/lib/es6/Belt_Array.js";
+import * as Stdlib_Array from "@rescript/runtime/lib/es6/Stdlib_Array.js";
 
 function init() {
   let cards = Belt_Array.makeBy(81, param => ({
@@ -32,12 +33,63 @@ function init() {
   return cards;
 }
 
+function partition(deck) {
+  let match = Stdlib_Array.reduceWithIndex(deck, [
+    [],
+    []
+  ], (param, card, i) => {
+    let hidden = param[1];
+    let shown = param[0];
+    if (i < 12) {
+      return [
+        Belt_Array.concatMany([
+          [card],
+          shown
+        ]),
+        hidden
+      ];
+    } else {
+      return [
+        shown,
+        Belt_Array.concatMany([
+          [card],
+          hidden
+        ])
+      ];
+    }
+  });
+  return [
+    match[0],
+    match[1]
+  ];
+}
+
+function deal(deck, viewableCardsOpt) {
+  let viewableCards = viewableCardsOpt !== undefined ? viewableCardsOpt : 12;
+  let hidden = deck[1];
+  let shown = deck[0];
+  let diff = viewableCards - shown.length | 0;
+  if (diff === 0) {
+    return [
+      shown,
+      hidden
+    ];
+  }
+  let newHidden = hidden.slice(diff);
+  let newShown = hidden.slice(0, diff);
+  let newShown$1 = shown.concat(newShown);
+  return [
+    newShown$1,
+    newHidden
+  ];
+}
+
 function useDeck() {
   let match = React.useState(() => init());
   let setDeck = match[1];
   let _deck = match[0];
   let resetDeck = () => setDeck(param => init());
-  let deck = React.useMemo(() => Belt_Array.shuffle(_deck), [_deck]);
+  let deck = React.useMemo(() => partition(Belt_Array.shuffle(_deck)), [_deck]);
   return [
     deck,
     resetDeck
@@ -46,6 +98,8 @@ function useDeck() {
 
 export {
   init,
+  partition,
+  deal,
   useDeck,
 }
 /* react Not a pure module */

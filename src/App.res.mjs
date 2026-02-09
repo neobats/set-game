@@ -22,6 +22,8 @@ function App(props) {
   let setYeet = match[1];
   let handleClick = param => setYeet(param => make());
   let match$1 = Deck.useDeck();
+  let resetDeck = match$1[1];
+  React.useEffect(() => (() => resetDeck()), []);
   return JsxRuntime.jsxs("div", {
     children: [
       JsxRuntime.jsx(Icon.Patterns.make, {}),
@@ -34,7 +36,7 @@ function App(props) {
         className: "text-2xl m-16 font-semibold text-center"
       }),
       JsxRuntime.jsx(Board.Render.make, {
-        deck: match$1[0]
+        deck: match$1[0][0]
       }),
       JsxRuntime.jsx(CallSetButton.make, {
         text: "SET!",

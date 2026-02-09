@@ -37,6 +37,39 @@ let init = (): array<CardDef.t> => {
   cards
 }
 
+type deckAtPlay = (array<CardDef.t>, array<CardDef.t>)
+
+let partition = (deck: array<CardDef.t>): deckAtPlay => {
+  let (shown, hidden) = Array.reduceWithIndex(
+    deck, 
+    ([], []), 
+    ((shown, hidden), card, i) => {
+      if i < 12 {
+        ([card, ...shown], hidden)
+      } else {
+        (shown, [card, ...hidden])
+      }
+    }
+  )
+
+  (shown, hidden)
+}
+
+// TODO: test this
+let deal = (~deck: deckAtPlay, ~viewableCards: int = 12): deckAtPlay => {
+  let (shown, hidden) = deck
+  let diff = viewableCards - Array.length(shown)
+
+  if diff == 0 {
+    (shown, hidden)
+  } else {
+    let newHidden = Array.slice(hidden, ~start=diff)
+    let newShown = Array.slice(hidden, ~start=0, ~end=diff)
+    let newShown = Array.concat(shown, newShown)
+    (newShown, newHidden)
+  }
+}
+
 let useDeck = () => {
   let (_deck, setDeck) = React.useState(() => init())
 
@@ -44,6 +77,9 @@ let useDeck = () => {
     setDeck(_ => init())
   }
 
-  let deck = React.useMemo(() => Belt.Array.shuffle(_deck), [_deck])
+  let deck = React.useMemo(
+    () => Belt.Array.shuffle(_deck) -> partition,
+    [_deck]
+  )
   (deck, resetDeck)
 }
