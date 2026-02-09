@@ -147,76 +147,80 @@ function Icon$Patterns(props) {
     "Green",
     "Purple"
   ];
-  return JsxRuntime.jsx("defs", {
-    children: Belt_Array.map(colors, color => {
-      let patternId = "stripes-" + colorToString(color);
-      let colorValue = getColorValue(color);
-      return JsxRuntime.jsxs("pattern", {
-        children: [
-          JsxRuntime.jsx("line", {
-            x1: "1",
-            x2: "1",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "2.2",
-            x2: "2.2",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "3.5",
-            x2: "3.5",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "4.8",
-            x2: "4.8",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "6",
-            x2: "6",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "7.2",
-            x2: "7.2",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "8.5",
-            x2: "8.5",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "9.8",
-            x2: "9.8",
-            y1: "0",
-            y2: "8"
-          }),
-          JsxRuntime.jsx("line", {
-            x1: "11",
-            x2: "11",
-            y1: "0",
-            y2: "8"
-          })
-        ],
-        id: patternId,
-        height: "8",
-        width: "12",
-        patternUnits: "userSpaceOnUse",
-        stroke: colorValue,
-        strokeWidth: "0.3",
-        x: "0"
-      }, patternId);
-    })
+  return JsxRuntime.jsx("svg", {
+    children: JsxRuntime.jsx("defs", {
+      children: Belt_Array.map(colors, color => {
+        let patternId = "stripes-" + colorToString(color);
+        let colorValue = getColorValue(color);
+        return JsxRuntime.jsxs("pattern", {
+          children: [
+            JsxRuntime.jsx("line", {
+              x1: "1",
+              x2: "1",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "2.2",
+              x2: "2.2",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "3.5",
+              x2: "3.5",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "4.8",
+              x2: "4.8",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "6",
+              x2: "6",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "7.2",
+              x2: "7.2",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "8.5",
+              x2: "8.5",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "9.8",
+              x2: "9.8",
+              y1: "0",
+              y2: "8"
+            }),
+            JsxRuntime.jsx("line", {
+              x1: "11",
+              x2: "11",
+              y1: "0",
+              y2: "8"
+            })
+          ],
+          id: patternId,
+          height: "8",
+          width: "12",
+          patternUnits: "userSpaceOnUse",
+          stroke: colorValue,
+          strokeWidth: "0.3",
+          x: "0"
+        }, patternId);
+      })
+    }),
+    height: "0",
+    width: "0"
   });
 }
 
