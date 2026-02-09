@@ -6,14 +6,14 @@
   - number (1-3): 1, 2, 3 symbols
   - fill (1-3): Solid, Stripped, Outlined
  */
-let init = (): array<Card.t> => {
-  let cards: array<Card.t> = Belt.Array.makeBy(81, _ => ({
+let init = (): array<CardDef.t> => {
+  let cards: array<CardDef.t> = Belt.Array.makeBy(81, _ => ({
     id: 0,
-    shape: Card.Tilde,
-    color: Card.Red,
-    fill: Card.Solid,
-    number: Card.One,
-  }: Card.t))
+    shape: CardDef.Tilde,
+    color: CardDef.Red,
+    fill: CardDef.Solid,
+    number: CardDef.One,
+  }: CardDef.t))
   
   let cardId = ref(0)
   
@@ -23,10 +23,10 @@ let init = (): array<Card.t> => {
         for fill in 1 to 3 {
           cards[cardId.contents] = {
             id: cardId.contents,
-            shape: Card.toShape(shape),
-            color: Card.toColor(color),
-            fill: Card.toFill(fill),
-            number: Card.toNumber(number),
+            shape: CardDef.toShape(shape),
+            color: CardDef.toColor(color),
+            fill: CardDef.toFill(fill),
+            number: CardDef.toNumber(number),
           }
           Int.Ref.increment(cardId)
         }
@@ -35,4 +35,15 @@ let init = (): array<Card.t> => {
   }
   
   cards
+}
+
+let useDeck = () => {
+  let (_deck, setDeck) = React.useState(() => init())
+
+  let resetDeck = () => {
+    setDeck(_ => init())
+  }
+
+  let deck = React.useMemo(() => Belt.Array.shuffle(_deck), [_deck])
+  (deck, resetDeck)
 }

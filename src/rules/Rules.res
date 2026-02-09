@@ -22,10 +22,10 @@ module ListCollection = {
 
 /**
   Functor that creates a GameSet module parameterized by:
-  - Card: the card module type
+  - CardDef: the card module type
   - Collection: the collection module (like ListCollection)
  */
-module MakeGameSet = (C: Card.t, Collection: Collection) => {
+module MakeGameSet = (C: CardDef.t, Collection: Collection) => {
   type t = Collection.t<C.t>
 
   type status = 
@@ -85,7 +85,7 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
    (all same or all different - i.e., set size is 1 or 3)
    Takes the property getter first to enable partial application
    */
-  let checkProperty = (getProperty: Card.t => 'a, cards: list<Card.t>): check => {
+  let checkProperty = (getProperty: CardDef.t => 'a, cards: list<CardDef.t>): check => {
     let values = toSet(Set.make(), List.map(cards, getProperty))
     switch Set.size(values) {
     | 1 => Valid
@@ -115,44 +115,4 @@ module MakeGameSet = (C: Card.t, Collection: Collection) => {
   let checkNumbers = checkProperty((card) => card.number, ...)
 }
 
-module GameSet = MakeGameSet(Card, ListCollection)
-
-let test = () => {
-  let deck = Deck.init() -> Belt.Array.shuffle
-  Console.log2("Deck", deck)
-
-  let cards = Array.slice(deck, ~start=0, ~end=3)
-  [0, 1, 2] -> Array.reduce(
-    GameSet.make(),
-    (set, i) => {
-      GameSet.maybeSet(set) -> Console.log2("Status", _)
-      let s = GameSet.add(
-        set, 
-        Array.get(cards, i)->Option.getOrThrow,
-      )
-
-      let status = GameSet.maybeSet(s)
-
-      switch status {
-      | GameSet.Filled(set') => Console.log2("Set filled", set')
-      | GameSet.Filling(set') => Console.log2("Set filling", set')
-      | GameSet.Empty => Console.log("Set empty")
-      }
-
-      s
-    }
-  ) -> ignore
-
-
-  let listCards = List.fromArray(cards)
-  let checkFns = [
-    ("Shapes", GameSet.checkShapes),
-    ("Colors", GameSet.checkColors),
-    ("Fills", GameSet.checkFills),
-    ("Numbers", GameSet.checkNumbers)
-  ]
-
-  let _ = checkFns 
-    -> Array.map(((name, checkFn)) => (name, checkFn(listCards)))
-    -> Array.forEach(((name, check)) => Console.log3("Check", name, check))
-}
+module GameSet = MakeGameSet(CardDef, ListCollection)

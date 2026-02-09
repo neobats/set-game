@@ -13,13 +13,43 @@ let showBoardState = (state: state) => {
   } -> React.string
 }
 
+type hasChildren = (React.element) => bool
+let hasChildren = %raw(`function hasChildren(element) { 
+  console.log("element", element)
+  return element.hasChildNodes() 
+}`)
+
 module Render = {
   @react.component
-  let make = () => {
+  let make = (~deck: array<CardDef.t>) => {
   let (boardState, setBoardState) = React.useState(() => Initializing)
+  let boardRef = React.useRef(null)
 
-  <article className="grid grid-cols-3 gap-6">
+  React.useLayoutEffect(() => {
+    let boardElement = boardRef.current
+    let hasCards = boardElement
+      ->Nullable.map(
+        element => {
+          hasChildren(element)
+        }
+      )
+      ->Nullable.getOr(false)
+
+    if hasCards {
+      setBoardState(_ => Active)
+    }
+
+    Some(() => {
+      setBoardState(_ => Disabled)
+    })
+  }, [])
+  Console.log2("boardState", boardState)
+
+  <>
     <p>{boardState -> showBoardState}</p>
-  </article>
+    <article className="grid grid-cols-3 gap-6" ref={ReactDOM.Ref.domRef(boardRef)}>
+      {Belt.Array.map(deck, card => <Icon.make key={card.id->Int.toString} card=card />)->React.array}
+    </article>
+  </>
   }
 }

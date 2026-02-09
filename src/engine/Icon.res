@@ -12,7 +12,7 @@ type shapeProps = {
 /**
   Get HSL color string for a color variant
   */
-let getColorValue = (color: Card.color): string => {
+let getColorValue = (color: CardDef.color): string => {
   switch color {
   | Red => "hsl(0, 100%, 45%)"
   | Green => "hsl(120, 100%, 25%)"
@@ -23,12 +23,12 @@ let getColorValue = (color: Card.color): string => {
 /**
   Get HSL color string for a card's color
   */
-let getColor = (card: Card.t): string => getColorValue(card.color)
+let getColor = (card: CardDef.t): string => getColorValue(card.color)
 
 /**
   Convert color variant to lowercase string for pattern IDs
   */
-let colorToString = (color: Card.color): string => {
+let colorToString = (color: CardDef.color): string => {
   switch color {
   | Red => "red"
   | Green => "green"
@@ -39,7 +39,7 @@ let colorToString = (color: Card.color): string => {
 /**
   Generate a unique pattern ID for striped fills based on color
   */
-let getPatternId = (card: Card.t): string => {
+let getPatternId = (card: CardDef.t): string => {
   "stripes-" ++ colorToString(card.color)
 }
 
@@ -47,7 +47,7 @@ let getPatternId = (card: Card.t): string => {
   Get fill and stroke attributes based on card's fill type
   Returns shapeProps with fill, stroke, and strokeWidth
   */
-let getFillAttrs = (card: Card.t): shapeProps => {
+let getFillAttrs = (card: CardDef.t): shapeProps => {
   let color = getColor(card)
   switch card.fill {
   | Solid => {fill: color, stroke: "none", strokeWidth: "0"}
@@ -106,7 +106,7 @@ module Tilde = {
   Main render function that handles fill logic and delegates to shape components
   */
 @react.component
-let make = (~card: Card.t) => {
+let make = (~card: CardDef.t) => {
   let {fill, stroke, strokeWidth} = getFillAttrs(card)
   switch card.shape {
   | Diamond => <Diamond fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
@@ -126,7 +126,7 @@ module Patterns = {
     */
   @react.component
   let make = () => {
-    let colors: array<Card.color> = [Card.Red, Card.Green, Card.Purple]
+    let colors: array<CardDef.color> = [CardDef.Red, CardDef.Green, CardDef.Purple]
     
     <svg width="0" height="0">
       <defs>

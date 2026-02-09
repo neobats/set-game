@@ -17,10 +17,13 @@ let make = () => {
   let handleClick = _ => {
     setYeet(_ => Some(Yeet.make()))
   }
-  // Rules.test()
+  let (deck, resetDeck) = Deck.useDeck()
+
   <div className="max-w-200">
+    <Icon.Patterns />
     <h1 className="text-6xl m-16 font-semibold text-center"> {"Set game"->React.string} </h1>
     <h2 className="text-2xl m-16 font-semibold text-center"> {yeet->Option.getOr(React.null)} </h2>
+    <Board.Render deck={deck} />
     <CallSetButton text="SET!" onClick={handleClick} />
   </div>
 }
