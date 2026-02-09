@@ -5,6 +5,8 @@ import * as JsxRuntime from "react/jsx-runtime";
 
 function showBoardState(state) {
   switch (state) {
+    case "Initializing" :
+      return "Initializing";
     case "Active" :
       return "Active";
     case "Disabled" :
@@ -15,7 +17,7 @@ function showBoardState(state) {
 }
 
 function Board$Render(props) {
-  let match = React.useState(() => "Active");
+  let match = React.useState(() => "Initializing");
   return JsxRuntime.jsx("article", {
     children: JsxRuntime.jsx("p", {
       children: showBoardState(match[0])
