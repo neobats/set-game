@@ -49,10 +49,22 @@ function toNumber(n) {
   }
 }
 
+function fromNumber(n) {
+  switch (n) {
+    case "One" :
+      return 1;
+    case "Two" :
+      return 2;
+    case "Three" :
+      return 3;
+  }
+}
+
 export {
   toShape,
   toColor,
   toFill,
   toNumber,
+  fromNumber,
 }
 /* No side effect */

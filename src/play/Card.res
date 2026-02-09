@@ -7,8 +7,13 @@ type state =
 let make = (~card: CardDef.t, ~state: state = Disabled) => {
   let (cardState, setCardState) = React.useState(() => state)
 
+
+  let cardsToRender = card.number 
+    -> CardDef.fromNumber
+    -> (n) => Array.make(~length=n, card)
+
   <article 
-    className="flex flex-col items-center justify-between p-2 border-2 border-gray-300 rounded-md"
+    className="flex flex-col items-center justify-center p-2 border-3 border-gray-700 rounded-lg"
     role="button"
     ariaDisabled={cardState == Disabled}
     ariaSelected={cardState == Selected}
@@ -19,6 +24,6 @@ let make = (~card: CardDef.t, ~state: state = Disabled) => {
       }
     }}
   >
-    <Icon.make card=card />
+    {Array.map(cardsToRender, card => <Icon.make card=card />)->React.array}
   </article>
 }

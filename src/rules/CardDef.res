@@ -73,6 +73,14 @@ let toNumber = (n: int): number => {
   }
 }
 
+let fromNumber = (n: number): int => {
+  switch n {
+  | One => 1
+  | Two => 2
+  | _ => 3
+  }
+}
+
 module type t = {
   type shape
   type color

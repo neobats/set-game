@@ -2,21 +2,25 @@
 
 import * as Icon from "../engine/Icon.res.mjs";
 import * as React from "react";
+import * as CardDef from "../rules/CardDef.res.mjs";
+import * as Stdlib_Array from "@rescript/runtime/lib/es6/Stdlib_Array.js";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Card(props) {
   let __state = props.state;
+  let card = props.card;
   let state = __state !== undefined ? __state : "Disabled";
   let match = React.useState(() => state);
   let setCardState = match[1];
   let cardState = match[0];
+  let cardsToRender = Stdlib_Array.make(CardDef.fromNumber(card.number), card);
   return JsxRuntime.jsx("article", {
-    children: JsxRuntime.jsx(Icon.make, {
-      card: props.card
-    }),
+    children: cardsToRender.map(card => JsxRuntime.jsx(Icon.make, {
+      card: card
+    })),
     "aria-disabled": cardState === "Disabled",
     "aria-selected": cardState === "Selected",
-    className: "flex flex-col items-center justify-between p-2 border-2 border-gray-300 rounded-md",
+    className: "flex flex-col items-center justify-center p-2 border-3 border-gray-700 rounded-lg",
     role: "button",
     disabled: cardState === "Disabled",
     onClick: param => {
