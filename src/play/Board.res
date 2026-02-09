@@ -15,7 +15,6 @@ let showBoardState = (state: state) => {
 
 type hasChildren = (React.element) => bool
 let hasChildren = %raw(`function hasChildren(element) { 
-  console.log("element", element)
   return element.hasChildNodes() 
 }`)
 
@@ -43,7 +42,6 @@ module Render = {
       setBoardState(_ => Disabled)
     })
   }, [])
-  Console.log2("boardState", boardState)
 
   <>
     <p>{boardState -> showBoardState}</p>

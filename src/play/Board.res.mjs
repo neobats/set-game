@@ -21,14 +21,12 @@ function showBoardState(state) {
 }
 
 let hasChildren = (function hasChildren(element) { 
-  console.log("element", element)
   return element.hasChildNodes() 
 });
 
 function Board$Render(props) {
   let match = React.useState(() => "Initializing");
   let setBoardState = match[1];
-  let boardState = match[0];
   let boardRef = React.useRef(null);
   React.useLayoutEffect(() => {
     let boardElement = boardRef.current;
@@ -38,11 +36,10 @@ function Board$Render(props) {
     }
     return () => setBoardState(param => "Disabled");
   }, []);
-  console.log("boardState", boardState);
   return JsxRuntime.jsxs(JsxRuntime.Fragment, {
     children: [
       JsxRuntime.jsx("p", {
-        children: showBoardState(boardState)
+        children: showBoardState(match[0])
       }),
       JsxRuntime.jsx("article", {
         children: Belt_Array.map(props.deck, card => JsxRuntime.jsx(Card.make, {
