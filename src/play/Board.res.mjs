@@ -2,7 +2,6 @@
 
 import * as Card from "./Card.res.mjs";
 import * as React from "react";
-import * as Belt_Array from "@rescript/runtime/lib/es6/Belt_Array.js";
 import * as Stdlib_Nullable from "@rescript/runtime/lib/es6/Stdlib_Nullable.js";
 import * as Primitive_option from "@rescript/runtime/lib/es6/Primitive_option.js";
 import * as JsxRuntime from "react/jsx-runtime";
@@ -42,7 +41,7 @@ function Board$Render(props) {
         children: showBoardState(match[0])
       }),
       JsxRuntime.jsx("article", {
-        children: Belt_Array.map(props.deck, card => JsxRuntime.jsx(Card.make, {
+        children: props.deck.map(card => JsxRuntime.jsx(Card.make, {
           card: card
         }, card.id.toString())),
         ref: Primitive_option.some(boardRef),
